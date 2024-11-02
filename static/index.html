@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Server-Sent Events (SSE)</title>
+  <style>
+    :root {
+      --bg-color: rgb(0, 0, 0);
+      --text-color: rgb(255, 255, 220);
+      --primary-color: purple;
+      --secondary-color: aliceblue;
+    }
+
+    /* Body */
+    body {
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      font-smooth: antialiased;
+    }
+
+    /* Main */
+    main {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Progress */
+    progress {
+      border: 1px solid var(--primary-color);
+      width: 250px;
+      height: 20px;
+    }
+    progress::-webkit-progress-bar {
+      background-color: black;
+    }
+    progress::-webkit-progress-value {
+      background-color: var(--primary-color);
+    }
+
+    /* Label */
+    label {
+      font-size: 2rem;
+      margin: 1rem;
+    }
+  </style>
+  <script>
+    const eventSource = new EventSource('http://127.0.0.1:3333/progress');
+
+    eventSource.onmessage = (event) => {
+      console.log('Message:', event.data);
+      const data = JSON.parse(event.data);
+      document.getElementById('progress').value = data.progress;
+      document.getElementById('progress-label').innerHTML = data.progress.toString().concat('%');
+    };
+
+    eventSource.onerror = (error) => {
+      console.error('Error:', error);
+    };
+  </script>
+</head>
+<body>
+  <main>
+    <h2>Work in progress...</h2>
+    <progress id="progress" value="1" max="100"></progress>
+    <label id="progress-label">0%</label>
+  </main>
+</body>
+</html>
